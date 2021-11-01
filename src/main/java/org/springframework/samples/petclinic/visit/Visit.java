@@ -15,12 +15,12 @@
  */
 package org.springframework.samples.petclinic.visit;
 
+import org.hibernate.annotations.Fetch;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.BaseEntity;
+import org.springframework.samples.petclinic.vet.Vet;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
@@ -44,6 +44,14 @@ public class Visit extends BaseEntity {
 
 	@Column(name = "pet_id")
 	private Integer petId;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "vet_id")
+	private Vet vet;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "status")
+	private VisitStatus visitStatus;
 
 	/**
 	 * Creates a new instance of Visit for the current date
@@ -76,4 +84,19 @@ public class Visit extends BaseEntity {
 		this.petId = petId;
 	}
 
+	public Vet getVet() {
+		return vet;
+	}
+
+	public void setVet(Vet vet) {
+		this.vet = vet;
+	}
+
+	public VisitStatus getVisitStatus() {
+		return visitStatus;
+	}
+
+	public void setVisitStatus(VisitStatus visitStatus) {
+		this.visitStatus = visitStatus;
+	}
 }

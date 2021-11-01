@@ -15,8 +15,10 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import org.springframework.samples.petclinic.vet.VetRepository;
 import org.springframework.samples.petclinic.visit.Visit;
 import org.springframework.samples.petclinic.visit.VisitRepository;
+import org.springframework.samples.petclinic.visit.VisitStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -36,11 +38,12 @@ import java.util.Map;
 class VisitController {
 
 	private final VisitRepository visits;
-
+	private final VetRepository vets;
 	private final PetRepository pets;
 
-	public VisitController(VisitRepository visits, PetRepository pets) {
+	public VisitController(VisitRepository visits, VetRepository vets, PetRepository pets) {
 		this.visits = visits;
+		this.vets = vets;
 		this.pets = pets;
 	}
 
@@ -60,8 +63,10 @@ class VisitController {
 	public Visit loadPetWithVisit(@PathVariable("petId") int petId, Map<String, Object> model) {
 		Pet pet = this.pets.findById(petId);
 		pet.setVisitsInternal(this.visits.findByPetId(petId));
+		model.put("vets",vets.findAll());
 		model.put("pet", pet);
 		Visit visit = new Visit();
+		visit.setVisitStatus(VisitStatus.ACTIVE);
 		pet.addVisit(visit);
 		return visit;
 	}
@@ -82,6 +87,31 @@ class VisitController {
 			this.visits.save(visit);
 			return "redirect:/owners/{ownerId}";
 		}
+	}
+
+	@GetMapping("/owners/{ownerId}/pets/{petId}/visits/{visitId}/update")
+	public String initUpdateVisitForm(@PathVariable("petId") int petId, Map<String, Object> model){
+		return "pets/createOrUpdateVisitForm";
+	}
+
+	@PostMapping("/owners/{ownerId}/pets/{petId}/visits/{visitId}/update")
+	public String processUpdateVisitForm(@PathVariable int visitId, @Valid Visit visit, BindingResult result) {
+		if (result.hasErrors()) {
+			return "pets/createOrUpdateVisitForm";
+		}
+		else {
+			visit.setId(visitId);
+			this.visits.save(visit);
+			return "redirect:/owners/{ownerId}";
+		}
+	}
+
+	@PostMapping("/owners/{ownerId}/pets/{petId}/visits/{visitId}/cancel")
+	public String cancelVisit(@PathVariable int visitId) {
+		Visit byId = visits.getById(visitId);
+		byId.setVisitStatus(VisitStatus.CANCELED);
+		this.visits.save(byId);
+		return "redirect:/owners/{ownerId}";
 	}
 
 }

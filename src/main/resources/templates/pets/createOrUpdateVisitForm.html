@@ -35,6 +35,14 @@
       <input
         th:replace="~{fragments/inputField :: input ('Description', 'description', 'text')}" />
     </div>
+    <select th:if="${!vets.isEmpty()}" th:field="*{vet.id}">
+      <div th:each="vet : ${vets}" >
+        <option th:value="${vet.getId()}">
+          <td th:text="${vet.getFirstName()}"></td>
+          <td th:text="${vet.getLastName()}"></td>
+        </option>
+      </div>
+    </select>
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">

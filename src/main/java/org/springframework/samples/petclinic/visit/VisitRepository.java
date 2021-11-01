@@ -18,8 +18,11 @@ package org.springframework.samples.petclinic.visit;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.repository.Repository;
 import org.springframework.samples.petclinic.model.BaseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository class for <code>Visit</code> domain objects All method names are compliant
@@ -40,7 +43,7 @@ public interface VisitRepository extends Repository<Visit, Integer> {
 	 * @see BaseEntity#isNew
 	 */
 	void save(Visit visit) throws DataAccessException;
-
+	Visit getById(Integer id);
 	List<Visit> findByPetId(Integer petId);
 
 }
