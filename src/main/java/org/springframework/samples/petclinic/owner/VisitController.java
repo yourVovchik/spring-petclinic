@@ -20,6 +20,7 @@ import org.springframework.samples.petclinic.visit.Visit;
 import org.springframework.samples.petclinic.visit.VisitRepository;
 import org.springframework.samples.petclinic.visit.VisitStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ import java.util.Map;
  * @author Dave Syer
  */
 @Controller
+@Transactional
 class VisitController {
 
 	private final VisitRepository visits;
